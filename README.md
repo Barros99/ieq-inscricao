@@ -1,4 +1,4 @@
-# ieg_sub
+# ieq_sub
 
 A new Flutter project.
 
