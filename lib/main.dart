@@ -54,51 +54,56 @@ class _MyCustomFormState extends State<MyCustomForm> {
       appBar: AppBar(
         title: const Text('ESCOLA BÍBLICA - 2023 - INSCRIÇÃO'),
       ),
-      body: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            TextFormField(
-              controller: nome,
-              decoration: const InputDecoration(
-                  border: UnderlineInputBorder(), labelText: 'Nome'),
-            ),
-            TextFormField(
-              controller: dataNascimento,
-              decoration: const InputDecoration(
-                border: UnderlineInputBorder(),
-                labelText: 'Data de Nascimento',
+      body: SingleChildScrollView(
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              TextFormField(
+                controller: nome,
+                decoration: const InputDecoration(
+                    border: UnderlineInputBorder(), labelText: 'Nome'),
               ),
-            ),
-            TextFormField(
-              controller: celular,
-              decoration: const InputDecoration(
-                border: UnderlineInputBorder(),
-                labelText: 'Celular',
+              TextFormField(
+                keyboardType: TextInputType.datetime,
+                controller: dataNascimento,
+                decoration: const InputDecoration(
+                  border: UnderlineInputBorder(),
+                  labelText: 'Data de Nascimento',
+                ),
               ),
-            ),
-            TextFormField(
-              controller: classe,
-              decoration: const InputDecoration(
-                border: UnderlineInputBorder(),
-                labelText: 'Classe',
+              TextFormField(
+                controller: celular,
+                decoration: const InputDecoration(
+                  border: UnderlineInputBorder(),
+                  labelText: 'Celular',
+                ),
               ),
-            ),
-            TextFormField(
-              controller: batizado,
-              decoration: const InputDecoration(
-                border: UnderlineInputBorder(),
-                labelText: 'Batizado',
+              TextFormField(
+                controller: classe,
+                decoration: const InputDecoration(
+                  border: UnderlineInputBorder(),
+                  labelText: 'Classe',
+                ),
               ),
-            ),
-            TextFormField(
-              controller: dataBatizado,
-              decoration: const InputDecoration(
-                border: UnderlineInputBorder(),
-                labelText: 'Data de Batismo',
+              TextFormField(
+                controller: batizado,
+                decoration: const InputDecoration(
+                  border: UnderlineInputBorder(),
+                  labelText: 'Batizado',
+                ),
               ),
-            ),
-          ]),
+              TextFormField(
+                keyboardType: TextInputType.datetime,
+                controller: dataBatizado,
+                decoration: const InputDecoration(
+                  border: UnderlineInputBorder(),
+                  labelText: 'Data de Batismo',
+                ),
+              ),
+              const RadioWidgetStateful(),
+            ]),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           save(Aluno(
@@ -114,8 +119,52 @@ class _MyCustomFormState extends State<MyCustomForm> {
         },
         tooltip: 'Save',
         child: const Icon(Icons.add),
-
       ),
+    );
+  }
+}
+
+enum IsBatizado { sim, nao }
+
+class RadioWidgetStateful extends StatefulWidget {
+  const RadioWidgetStateful({super.key});
+
+  @override
+  State<RadioWidgetStateful> createState() => _RadioWidgetStateful();
+}
+
+class _RadioWidgetStateful extends State<RadioWidgetStateful> {
+  IsBatizado? _option = IsBatizado.sim;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        ListTile(
+          title: const Text('Sim'),
+          leading: Radio<IsBatizado>(
+            value: IsBatizado.sim,
+            groupValue: _option,
+            onChanged: (IsBatizado? value) {
+              setState(() {
+                _option = value;
+              });
+            },
+          ),
+        ),
+        ListTile(
+          title: const Text('Não'),
+          leading: Radio<IsBatizado>(
+            value: IsBatizado.nao,
+            groupValue: _option,
+            onChanged: (IsBatizado? value) {
+              setState(() {
+                _option = value;
+              });
+            },
+          ),
+        ),
+      ],
     );
   }
 }
