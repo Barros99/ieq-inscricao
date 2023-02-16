@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:ieg_sub/database/db_config.dart';
+/* import 'package:flutter/material.dart';
+import 'package:ieq_sub/database/db_config.dart';
 import 'model/aluno.dart';
 
 void main() => runApp(const MyApp());
@@ -165,6 +165,34 @@ class _RadioWidgetStateful extends State<RadioWidgetStateful> {
           ),
         ),
       ],
+    );
+  }
+}
+ */
+
+import 'package:ieq_sub/screens/dashboard.dart';
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(
+        primaryColor: const Color.fromARGB(255, 27, 94, 94),
+        buttonTheme: ButtonThemeData(
+          buttonColor: Colors.blueAccent[700],
+          textTheme: ButtonTextTheme.primary,
+        ),
+        colorScheme: ColorScheme.fromSwatch()
+            .copyWith(secondary: Colors.blueAccent[700]),
+      ),
+      home: const Dashboard(),
     );
   }
 }
