@@ -63,4 +63,41 @@ class AlunoDao {
     }
     return alunos;
   }
+
+  Future<int> update(Aluno aluno) async {
+    final Database db = await getDatabase();
+    Map<String, dynamic> studentMap = _toMap(aluno);
+    return db.update(
+      _tableName,
+      studentMap,
+      where: '$_nome = ?',
+      whereArgs: [aluno.nome],
+    );
+  }
+
+  Future<int?> count() async {
+    final Database db = await getDatabase();
+    return Sqflite.firstIntValue(
+      await db.rawQuery('SELECT COUNT(*) FROM $_tableName'),
+    );
+  }
+
+  Future<int> delete(String nome) async {
+    final Database db = await getDatabase();
+    return db.delete(
+      _tableName,
+      where: '$_nome = ?',
+      whereArgs: [nome],
+    );
+  }
+
+  Future<int> deleteAll() async {
+    final Database db = await getDatabase();
+    return db.delete(_tableName);
+  }
+
+  Future<void> drop() async {
+    final Database db = await getDatabase();
+    await db.execute('DROP TABLE $_tableName');
+  }
 }
