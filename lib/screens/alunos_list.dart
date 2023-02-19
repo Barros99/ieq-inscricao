@@ -32,6 +32,15 @@ class _AlunosListState extends State<AlunosList> {
         },
         itemCount: _alunos.length,
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          setState(() {
+            _dao.deleteAll();
+            _alunos.clear();
+          });
+        },
+        child: const Icon(Icons.delete),
+      ),
     );
   }
 }
