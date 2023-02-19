@@ -13,6 +13,9 @@ class AlunoForm extends StatefulWidget {
 }
 
 class AlunoFormState extends State<AlunoForm> {
+
+  final _formKey = GlobalKey<FormState>();
+
   final TextEditingController _nomeController = TextEditingController();
   final TextEditingController _dataNascimentoController =
       TextEditingController();
@@ -25,7 +28,9 @@ class AlunoFormState extends State<AlunoForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Form(
+      key: _formKey,
+        child: Scaffold(
       appBar: AppBar(
         title: const Text('Cadastro de Alunos'),
       ),
@@ -36,7 +41,12 @@ class AlunoFormState extends State<AlunoForm> {
           children: [
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: TextField(
+              child: TextFormField(
+                validator: (value) {
+                  if(value == null || value.isEmpty){
+                    return "Digite um nome!";
+                  }
+                },
                 controller: _nomeController,
                 decoration: const InputDecoration(
                   labelText: 'Nome',
@@ -46,7 +56,7 @@ class AlunoFormState extends State<AlunoForm> {
             ),
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: TextField(
+              child: TextFormField(
                 controller: _dataNascimentoController,
                 keyboardType: TextInputType.datetime,
                 decoration: const InputDecoration(
@@ -57,7 +67,7 @@ class AlunoFormState extends State<AlunoForm> {
             ),
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: TextField(
+              child: TextFormField(
                 controller: _celularController,
                 keyboardType: TextInputType.phone,
                 decoration: const InputDecoration(
@@ -68,7 +78,7 @@ class AlunoFormState extends State<AlunoForm> {
             ),
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: TextField(
+              child: TextFormField(
                 controller: _classeController,
                 decoration: const InputDecoration(
                   labelText: 'Classe',
@@ -78,7 +88,7 @@ class AlunoFormState extends State<AlunoForm> {
             ),
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: TextField(
+              child: TextFormField(
                 controller: _batizadoController,
                 decoration: const InputDecoration(
                   labelText: 'Batizado',
@@ -88,7 +98,7 @@ class AlunoFormState extends State<AlunoForm> {
             ),
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: TextField(
+              child: TextFormField(
                 controller: _dataBatizadoController,
                 keyboardType: TextInputType.datetime,
                 decoration: const InputDecoration(
@@ -106,7 +116,8 @@ class AlunoFormState extends State<AlunoForm> {
                 final String batizado = _batizadoController.text;
                 final String dataBatizado = _dataBatizadoController.text;
 
-                final Aluno alunoNovo = Aluno(
+                if(_formKey.currentState!.validate()){
+                 final Aluno alunoNovo = Aluno(
                   nome,
                   dataNascimento,
                   celular,
@@ -116,12 +127,13 @@ class AlunoFormState extends State<AlunoForm> {
                   DateTime.now().toString(),
                 );
                 _dao.save(alunoNovo).then((id) => Navigator.pop(context));
-              },
+              }
+                },
               child: const Text('Salvar'),
             ),
           ],
         ),
       ),
-    );
+    ));
   }
 }
