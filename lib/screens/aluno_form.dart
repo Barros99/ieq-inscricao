@@ -1,8 +1,11 @@
-// create a class  form to add a new aluno
-
 import 'package:flutter/material.dart';
+import 'package:gender_picker/source/enums.dart';
+import 'package:gender_picker/source/gender_picker.dart';
+import 'package:ieq_sub/helpers/cell_br_formatter.dart';
 
 import '../database/dao/aluno_dao.dart';
+import '../helpers/date_br_formatter.dart';
+import '../helpers/reg_ex_date.dart';
 import '../model/aluno.dart';
 
 class AlunoForm extends StatefulWidget {
@@ -13,127 +16,176 @@ class AlunoForm extends StatefulWidget {
 }
 
 class AlunoFormState extends State<AlunoForm> {
-
   final _formKey = GlobalKey<FormState>();
+  var sexo = Gender.Male.toString();
 
-  final TextEditingController _nomeController = TextEditingController();
-  final TextEditingController _dataNascimentoController =
-      TextEditingController();
-  final TextEditingController _celularController = TextEditingController();
-  final TextEditingController _classeController = TextEditingController();
-  final TextEditingController _batizadoController = TextEditingController();
-  final TextEditingController _dataBatizadoController = TextEditingController();
+  final _nomeController = TextEditingController();
+  final _dataNascimentoController = TextEditingController();
+  final _celularController = TextEditingController();
+  final _classeController = TextEditingController();
+  final _batizadoController = TextEditingController();
+  final _dataBatizadoController = TextEditingController();
 
   final AlunoDao _dao = AlunoDao();
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: _formKey,
-        child: Scaffold(
+    return Scaffold(
       appBar: AppBar(
         title: const Text('Cadastro de Alunos'),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: TextFormField(
-                validator: (value) {
-                  if(value == null || value.isEmpty){
-                    return "Digite um nome!";
+      body: SafeArea(
+        child: SingleChildScrollView(
+            child: Form(
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          key: _formKey,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: TextFormField(
+                  controller: _nomeController,
+                  validator: (value) => value == null || value.isEmpty
+                      ? 'Por favor, informe o nome do aluno'
+                      : null,
+                  decoration: const InputDecoration(
+                    labelText: 'Nome',
+                  ),
+                  style: const TextStyle(fontSize: 24.0),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: TextFormField(
+                  controller: _dataNascimentoController,
+                  validator: (date) {
+                    return dateChecker(date);
+                  },
+                  keyboardType: TextInputType.datetime,
+                  inputFormatters: [
+                    DateBrFormater(mask: '##/##/####', separator: '/')
+                  ],
+                  decoration: const InputDecoration(
+                    labelText: 'Data de Nascimento',
+                  ),
+                  style: const TextStyle(fontSize: 24.0),
+                ),
+              ),
+              getWidget(false, false),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: TextFormField(
+                  controller: _celularController,
+                  keyboardType: TextInputType.phone,
+                  inputFormatters: [
+                    CellBrFormater(mask: '(##) #####-####', separator: ' ')
+                  ],
+                  decoration: const InputDecoration(
+                    labelText: 'Celular',
+                  ),
+                  style: const TextStyle(fontSize: 24.0),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: TextFormField(
+                  controller: _classeController,
+                  decoration: const InputDecoration(
+                    labelText: 'Classe',
+                  ),
+                  style: const TextStyle(fontSize: 24.0),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: TextFormField(
+                  controller: _batizadoController,
+                  decoration: const InputDecoration(
+                    labelText: 'Batizado',
+                  ),
+                  style: const TextStyle(fontSize: 24.0),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: TextFormField(
+                  controller: _dataBatizadoController,
+                  validator: (date) {
+                    return dateChecker(date);
+                  },
+                  keyboardType: TextInputType.datetime,
+                  inputFormatters: [
+                    DateBrFormater(mask: '##/##/####', separator: '/')
+                  ],
+                  decoration: const InputDecoration(
+                    labelText: 'Data do Batismo',
+                  ),
+                  style: const TextStyle(fontSize: 24.0),
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  final String nome = _nomeController.text;
+                  final String dataNascimento = _dataNascimentoController.text;
+                  final String celular = _celularController.text;
+                  final String classe = _classeController.text;
+                  final String batizado = _batizadoController.text;
+                  final String dataBatizado = _dataBatizadoController.text;
+
+                  if (_formKey.currentState!.validate()) {
+                    final Aluno alunoNovo = Aluno(
+                        nome,
+                        dataNascimento,
+                        celular,
+                        classe,
+                        batizado,
+                        dataBatizado,
+                        DateTime.now().toString(),
+                        sexo);
+                    _dao.save(alunoNovo).then((id) => Navigator.pop(context));
+                    debugPrint(sexo);
+                    debugPrint(alunoNovo.toString());
                   }
                 },
-                controller: _nomeController,
-                decoration: const InputDecoration(
-                  labelText: 'Nome',
-                ),
-                style: const TextStyle(fontSize: 24.0),
+                child: const Text('Salvar'),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: TextFormField(
-                controller: _dataNascimentoController,
-                keyboardType: TextInputType.datetime,
-                decoration: const InputDecoration(
-                  labelText: 'Data de Nascimento',
-                ),
-                style: const TextStyle(fontSize: 24.0),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: TextFormField(
-                controller: _celularController,
-                keyboardType: TextInputType.phone,
-                decoration: const InputDecoration(
-                  labelText: 'Celular',
-                ),
-                style: const TextStyle(fontSize: 24.0),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: TextFormField(
-                controller: _classeController,
-                decoration: const InputDecoration(
-                  labelText: 'Classe',
-                ),
-                style: const TextStyle(fontSize: 24.0),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: TextFormField(
-                controller: _batizadoController,
-                decoration: const InputDecoration(
-                  labelText: 'Batizado',
-                ),
-                style: const TextStyle(fontSize: 24.0),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: TextFormField(
-                controller: _dataBatizadoController,
-                keyboardType: TextInputType.datetime,
-                decoration: const InputDecoration(
-                  labelText: 'Data do Batismo',
-                ),
-                style: const TextStyle(fontSize: 24.0),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                final String nome = _nomeController.text;
-                final String dataNascimento = _dataNascimentoController.text;
-                final String celular = _celularController.text;
-                final String classe = _classeController.text;
-                final String batizado = _batizadoController.text;
-                final String dataBatizado = _dataBatizadoController.text;
-
-                if(_formKey.currentState!.validate()){
-                 final Aluno alunoNovo = Aluno(
-                  nome,
-                  dataNascimento,
-                  celular,
-                  classe,
-                  batizado,
-                  dataBatizado,
-                  DateTime.now().toString(),
-                );
-                _dao.save(alunoNovo).then((id) => Navigator.pop(context));
-              }
-                },
-              child: const Text('Salvar'),
-            ),
-          ],
-        ),
+            ],
+          ),
+        )),
       ),
-    ));
+    );
+  }
+
+  Widget getWidget(bool showOtherGender, bool alignVertical) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 40),
+      alignment: Alignment.center,
+      child: GenderPickerWithImage(
+        showOtherGender: showOtherGender,
+        verticalAlignedText: alignVertical,
+
+        // to show what's selected on app opens, but by default it's Male
+        selectedGender: Gender.Male,
+        selectedGenderTextStyle: const TextStyle(
+            color: Color(0xFF8b32a8), fontWeight: FontWeight.bold),
+        unSelectedGenderTextStyle:
+            const TextStyle(color: Colors.black, fontWeight: FontWeight.normal),
+        onChanged: (Gender? gender) {
+          // debugPrint(sexo);
+          sexo = gender == Gender.Male ? 'Masculino' : 'Feminino';
+        },
+        //Alignment between icons
+        equallyAligned: true,
+
+        animationDuration: const Duration(milliseconds: 300),
+        isCircular: true,
+        // default : true,
+        opacityOfGradient: 0.4,
+        padding: const EdgeInsets.all(3),
+        size: 50, //default : 40
+      ),
+    );
   }
 }
