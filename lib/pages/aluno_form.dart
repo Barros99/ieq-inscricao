@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:gender_picker/source/enums.dart';
 import 'package:gender_picker/source/gender_picker.dart';
-import 'package:ieq_sub/helpers/cell_br_formatter.dart';
+import 'package:ieq_sub/utils/cell_br_formatter.dart';
 
 import '../database/dao/aluno_dao.dart';
-import '../helpers/date_br_formatter.dart';
-import '../helpers/reg_ex_date.dart';
+import '../utils/date_br_formatter.dart';
+import '../utils/reg_ex_date.dart';
+import '../utils/set_classe.dart';
 import '../model/aluno.dart';
 
 class AlunoForm extends StatefulWidget {
@@ -22,7 +23,6 @@ class AlunoFormState extends State<AlunoForm> {
   final _nomeController = TextEditingController();
   final _dataNascimentoController = TextEditingController();
   final _celularController = TextEditingController();
-  final _classeController = TextEditingController();
   final _batizadoController = TextEditingController();
   final _dataBatizadoController = TextEditingController();
 
@@ -91,16 +91,6 @@ class AlunoFormState extends State<AlunoForm> {
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: TextFormField(
-                  controller: _classeController,
-                  decoration: const InputDecoration(
-                    labelText: 'Classe',
-                  ),
-                  style: const TextStyle(fontSize: 24.0),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: TextFormField(
                   controller: _batizadoController,
                   decoration: const InputDecoration(
                     labelText: 'Batizado',
@@ -127,27 +117,7 @@ class AlunoFormState extends State<AlunoForm> {
               ),
               ElevatedButton(
                 onPressed: () {
-                  final String nome = _nomeController.text;
-                  final String dataNascimento = _dataNascimentoController.text;
-                  final String celular = _celularController.text;
-                  final String classe = _classeController.text;
-                  final String batizado = _batizadoController.text;
-                  final String dataBatizado = _dataBatizadoController.text;
-
-                  if (_formKey.currentState!.validate()) {
-                    final Aluno alunoNovo = Aluno(
-                        nome,
-                        dataNascimento,
-                        celular,
-                        classe,
-                        batizado,
-                        dataBatizado,
-                        DateTime.now().toString(),
-                        sexo);
-                    _dao.save(alunoNovo).then((id) => Navigator.pop(context));
-                    debugPrint(sexo);
-                    debugPrint(alunoNovo.toString());
-                  }
+                  setAluno(context);
                 },
                 child: const Text('Salvar'),
               ),
@@ -157,6 +127,41 @@ class AlunoFormState extends State<AlunoForm> {
       ),
     );
   }
+
+  void setAluno(BuildContext context) {
+    final String nome = _nomeController.text;
+    final String dataNascimento = _dataNascimentoController.text;
+    final String celular = _celularController.text;
+    final String batizado = _batizadoController.text;
+    final String dataBatizado = _dataBatizadoController.text;
+    
+    ClasseHelper classeHelper =
+        ClasseHelper(sexo, dataNascimento);
+    final Object classeStr = classeHelper.classe;
+    
+    if (_formKey.currentState!.validate()) {
+      final Aluno alunoNovo = Aluno(
+          nome,
+          dataNascimento,
+          celular,
+          removeClassePrefix(classeStr),
+          batizado,
+          dataBatizado,
+          getDataAtual(),
+          setSexo());
+      _dao.save(alunoNovo).then((id) => Navigator.pop(context));
+      debugPrint(sexo);
+      debugPrint(classeStr.toString());
+      debugPrint(alunoNovo.toString());
+    }
+  }
+
+  String getDataAtual() => DateTime.now().toString();
+
+  String setSexo() => sexo == 'Gender.Male' ? 'Masculino' : 'Feminino';
+
+  String removeClassePrefix(Object classeStr) =>
+      classeStr.toString().substring(7);
 
   Widget getWidget(bool showOtherGender, bool alignVertical) {
     return Container(
@@ -174,7 +179,7 @@ class AlunoFormState extends State<AlunoForm> {
             const TextStyle(color: Colors.black, fontWeight: FontWeight.normal),
         onChanged: (Gender? gender) {
           // debugPrint(sexo);
-          sexo = gender == Gender.Male ? 'Masculino' : 'Feminino';
+          sexo = gender.toString();
         },
         //Alignment between icons
         equallyAligned: true,

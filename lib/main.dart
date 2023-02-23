@@ -43,7 +43,7 @@ class _RadioWidgetStateful extends State<RadioWidgetStateful> {
   }
 } */
 
-import 'package:ieq_sub/screens/dashboard.dart';
+import 'package:ieq_sub/pages/dashboard.dart';
 import 'package:flutter/material.dart';
 
 void main() {

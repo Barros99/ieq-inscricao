@@ -1,5 +1,5 @@
-import 'package:ieq_sub/screens/aluno_form.dart';
-import 'package:ieq_sub/screens/alunos_list.dart';
+import 'package:ieq_sub/pages/aluno_form.dart';
+import 'package:ieq_sub/pages/alunos_list.dart';
 import 'package:flutter/material.dart';
 
 class Dashboard extends StatelessWidget {

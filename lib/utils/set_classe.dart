@@ -5,7 +5,7 @@
 // adulto 30 - 59 anos
 // idoso 60
 
-enum Classe { crianca, adolescente, jovem, homens, mulheres, idoso }
+enum Classe { crianca, adolescente, jovem, homens, mulheres }
 
 class ClasseHelper {
   final String sexo;
@@ -22,10 +22,10 @@ class ClasseHelper {
       return Classe.adolescente;
     } else if (idade >= 18 && idade < 30) {
       return Classe.jovem;
-    } else if (idade >= 30 && idade < 60) {
+    } else if (idade >= 30) {
       return sexo == 'Gender.Male' ? Classe.homens : Classe.mulheres;
     } else {
-      return Classe.idoso;
+      return 'Não foi possível determinar a classe';
     }
   }
 }

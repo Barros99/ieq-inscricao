@@ -11,7 +11,8 @@ class AlunoDao {
       '$_classe TEXT,'
       '$_batizado TEXT,'
       '$_dataBatizado TEXT,'
-      '$_dataCadastro TEXT)';
+      '$_dataCadastro TEXT,'
+      '$_sexo TEXT)';
 
   static const String _tableName = 'alunos';
   static const String _nome = 'nome';
@@ -21,11 +22,12 @@ class AlunoDao {
   static const String _batizado = 'batizado';
   static const String _dataBatizado = 'data_batizado';
   static const String _dataCadastro = 'data_cadastro';
+  static const String _sexo = 'sexo';
 
   Future<int> save(Aluno aluno) async {
     final Database db = await getDatabase();
-    Map<String, dynamic> studentMap = _toMap(aluno);
-    return db.insert(_tableName, studentMap);
+    Map<String, dynamic> alunoMap = _toMap(aluno);
+    return db.insert(_tableName, alunoMap);
   }
 
   Future<List<Aluno>> findAll() async {
@@ -44,6 +46,7 @@ class AlunoDao {
     alunoMap[_batizado] = aluno.batizado;
     alunoMap[_dataBatizado] = aluno.dataBatizado;
     alunoMap[_dataCadastro] = aluno.dataCadastro;
+    alunoMap[_sexo] = aluno.sexo;
     return alunoMap;
   }
 
@@ -58,6 +61,7 @@ class AlunoDao {
         row[_batizado],
         row[_dataBatizado],
         row[_dataCadastro],
+        row[_sexo],
       );
       alunos.add(aluno);
     }
@@ -96,8 +100,11 @@ class AlunoDao {
     return db.delete(_tableName);
   }
 
-  Future<void> drop() async {
+  // drop and recreate alunos
+  Future<void> recreate() async {
     final Database db = await getDatabase();
-    await db.execute('DROP TABLE $_tableName');
+    await db.execute('DROP TABLE IF EXISTS $_tableName');
+    await db.execute(table);
   }
+  
 }

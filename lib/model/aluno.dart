@@ -13,6 +13,6 @@ class Aluno {
 
   @override
   String toString() {
-    return '{ nome: $nome, dataNascimento: $dataNascimento, celular: $celular, classe: $classe, batizado: $batizado, dataBatizado: $dataBatizado, dataCadastro: $dataCadastro, sexo: $sexo }\n';
+    return '"ALUNO": { nome: $nome, dataNascimento: $dataNascimento, celular: $celular, classe: $classe, batizado: $batizado, dataBatizado: $dataBatizado, dataCadastro: $dataCadastro, sexo: $sexo }\n';
   }
 }
