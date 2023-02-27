@@ -25,6 +25,7 @@ class AlunoFormState extends State<AlunoForm> {
   final _celularController = TextEditingController();
   final _batizadoController = TextEditingController();
   final _dataBatizadoController = TextEditingController();
+  late bool _isBatizado = false;
 
   final AlunoDao _dao = AlunoDao();
 
@@ -91,6 +92,11 @@ class AlunoFormState extends State<AlunoForm> {
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: TextFormField(
+                  onChanged: (value) {
+                    setState(() {
+                      _isBatizado = value == 'Sim' ? true : false;
+                    });
+                  },
                   controller: _batizadoController,
                   decoration: const InputDecoration(
                     labelText: 'Batizado',
@@ -102,9 +108,10 @@ class AlunoFormState extends State<AlunoForm> {
                 padding: const EdgeInsets.all(16.0),
                 child: TextFormField(
                   controller: _dataBatizadoController,
-                  validator: (date) {
+                  enabled: _isBatizado,
+                  validator: _isBatizado ? (date) {
                     return dateChecker(date);
-                  },
+                  } : null,
                   keyboardType: TextInputType.datetime,
                   inputFormatters: [
                     DateBrFormater(mask: '##/##/####', separator: '/')
