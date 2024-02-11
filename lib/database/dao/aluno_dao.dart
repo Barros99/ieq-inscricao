@@ -106,5 +106,4 @@ class AlunoDao {
     await db.execute('DROP TABLE IF EXISTS $_tableName');
     await db.execute(table);
   }
-  
 }
